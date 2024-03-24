@@ -67,10 +67,7 @@ def create_fastapi() -> FastAPI:
 
 def register_auth(app: FastAPI):
     @app.middleware("http")
-    async def handle_authorization(
-        request: Request,
-        call_next: Callable[[Request], Awaitable[Response]],
-    ) -> Response:
+    async def handle_authorization(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
         try:
             api.auth.set_user_from_token(request)
         except AuthError as err:
@@ -93,7 +90,7 @@ def run_api():
         "host": "0.0.0.0",
         "port": 8000,
         "log_level": "debug",
-        "workers": os.getenv("WEB_CONCURRENCY") if use_web_concurrency else 3,
+        "workers": int(os.getenv("WEB_CONCURRENCY")) if use_web_concurrency else 3,
         "reload": os.getenv("ENV", "prod") == "development",
         "debug": True,
     }
