@@ -53,21 +53,24 @@ class ExternalServices(containers.DeclarativeContainer):
 
 
 class Routers(containers.DeclarativeContainer):
-    external_services = providers.DependenciesContainer()
     application = providers.DependenciesContainer()
+    external_services = providers.DependenciesContainer()
 
     gns3_router: providers.Singleton[GNS3Router] = providers.Singleton(
         GNS3Router,
         client=external_services.gns3_proxy,
+        service=application.gns3,
     )
 
 
 class Application(containers.DeclarativeContainer):
     external_services = providers.DependenciesContainer()
+    repositories = providers.DependenciesContainer()
 
     gns3: providers.Singleton[GNS3Service] = providers.Singleton(
         GNS3Service,
         gns3_proxy=external_services.gns3_proxy,
+        user_repository=repositories.user,
     )
 
 
@@ -89,9 +92,10 @@ class Containers(containers.DeclarativeContainer):
     application: providers.Container[Application] = providers.Container(
         Application,
         external_services=external_services,
+        repositories=repositories,
     )
     routers: providers.Container[Routers] = providers.Container(
         Routers,
-        external_services=external_services,
         application=application,
+        external_services=external_services,
     )

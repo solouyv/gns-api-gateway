@@ -19,3 +19,5 @@ class Settings(BaseSettings):
     documentation_enabled: bool = True
     gns3_url: str
     database: DatabaseSettings = DatabaseSettings()
+
+    gns3_server_url: str

@@ -32,9 +32,7 @@ def set_user_from_token(request: Request) -> None:
 
 
 def get_user_token() -> str:
-    try:
-        token = user.get()
-    except:
-        raise AuthError("Token is not provided")
+    if token := user.get(None):
+        return token
 
-    return token
+    raise AuthError("Token is not provided")

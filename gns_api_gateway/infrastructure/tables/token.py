@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, String, Table, Integer
+from sqlalchemy import Column, ForeignKey, String, Table, Integer
 
 from gns_api_gateway.datasource import metadata
 
@@ -9,5 +9,4 @@ token_table = Table(
     metadata,
     Column("key", String, primary_key=True),
     Column("user_id", Integer, ForeignKey("users_user.id", ondelete="cascade"), nullable=False),
-    Column("created", DateTime, nullable=False),
 )

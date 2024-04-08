@@ -35,9 +35,9 @@ class AbstractRouter(ABC):
             response = await self._client.request(**await parsed_request.to_dict())
             return (
                 ResponseBuilder()
-                .with_content(response["content"])
-                .with_status(response["status_code"])
-                .with_headers(response["headers"])
+                .with_content(response.content)
+                .with_status(response.status_code)
+                .with_headers(response.headers)
                 .build()
             )
         except Exception:

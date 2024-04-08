@@ -1,6 +1,6 @@
 import abc
 import logging
-from typing import Any, Optional
+from typing import Optional
 
 from aiohttp import ClientSession, ClientTimeout, TCPConnector
 from aiohttp_retry import ExponentialRetry, RetryClient
@@ -8,6 +8,7 @@ from aiohttp_retry import ExponentialRetry, RetryClient
 from .auth_providers import BaseAuthProvider
 from .client_utils import CommonDictType, check_arguments
 from .constants import Methods
+from .response import Response
 
 __all__ = ["AbstractRestClient"]
 
@@ -34,7 +35,7 @@ class AbstractRestClient(abc.ABC):
         self._initialize()
 
     @check_arguments
-    async def request(self, *, method: Methods, url: str, **kwargs) -> dict[str, Any]:
+    async def request(self, *, method: Methods, url: str, **kwargs) -> Response:
         headers = self._unify_headers(kwargs)
         async with self._client.request(
             method=method,
@@ -42,11 +43,11 @@ class AbstractRestClient(abc.ABC):
             headers=headers,
             **kwargs,
         ) as response:
-            return {
-                "content": await response.read(),
-                "status_code": response.status,
-                "headers": response.headers,
-            }
+            return Response(
+                content=await response.read(),
+                status_code=response.status,
+                headers=dict(response.headers),
+            )
 
     async def close(self) -> None:
         await self._client.close()
